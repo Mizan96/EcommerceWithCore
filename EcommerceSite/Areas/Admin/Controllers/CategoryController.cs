@@ -3,8 +3,9 @@ using Ecommerce.DataAccess.Repository.IRepository;
 using Ecommerce.Models;
 using Microsoft.AspNetCore.Mvc;
 
-namespace EcommerceSite.Controllers
+namespace EcommerceSite.Areas.Admin.Controllers
 {
+    [Area("Admin")]
     public class CategoryController : Controller
     {
         private readonly IUnitOfWork _unitOfWork;
@@ -13,7 +14,7 @@ namespace EcommerceSite.Controllers
             _unitOfWork = unitOfWork;
         }
         public IActionResult Index()
-        {   
+        {
             List<Category> objectCategoryList = _unitOfWork.Category.GetAll().ToList();
             return View(objectCategoryList);
         }
@@ -29,15 +30,15 @@ namespace EcommerceSite.Controllers
             {
                 ModelState.AddModelError("Name", "Name and Display Order can not be the same");
             }
-            if(ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 _unitOfWork.Category.Add(obj);
                 _unitOfWork.Save();
-                TempData["success"] = "Category is added successfully"; 
+                TempData["success"] = "Category is added successfully";
                 return RedirectToAction("index", "category");
             }
             return View();
-            
+
         }
 
         public IActionResult Edit(int? id)
@@ -46,10 +47,10 @@ namespace EcommerceSite.Controllers
             {
                 return NotFound();
             }
-            Category? categoryFromDb = _unitOfWork.Category.Get(u=>u.Id==id);
+            Category? categoryFromDb = _unitOfWork.Category.Get(u => u.Id == id);
             //Category? categoryFromDb2 = _db.Categories.FirstOrDefault(u => u.Id == id);
             //Category? categoryFromDb3 = _db.Categories.Where(u=>u.Id == id).FirstOrDefault();
-            if (categoryFromDb == null) 
+            if (categoryFromDb == null)
             {
                 return NotFound();
             }
@@ -84,8 +85,9 @@ namespace EcommerceSite.Controllers
         }
         [HttpPost, ActionName("Delete")]
         public IActionResult DeletePost(int? id)
-        {   Category? obj = _unitOfWork.Category.Get(u => u.Id == id);
-            if (obj == null) 
+        {
+            Category? obj = _unitOfWork.Category.Get(u => u.Id == id);
+            if (obj == null)
             {
                 return NotFound();
             }
